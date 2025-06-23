@@ -1,11 +1,46 @@
-import React from 'react'
+import Navbar from "./components/navbar.jsx";
+
+import { Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./pages/HomePage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
+import { useAuthStore } from "./store/useAuthStore.js";
+import { useEffect } from "react";
+import { Loader } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  return (
-    <h1 className="text-3xl text-red-500 font-bold underline">
-      Hello world!
-    </h1>
-  )
-}
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
 
-export default App
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  console.log({ authUser });
+
+  if (isCheckingAuth && !authUser)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    );
+
+  return (
+    <div>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={authUser? <HomePage /> : <Navigate to="/login" />} />
+        <Route path="/signup" element={!authUser? <SignUpPage /> : <Navigate to ="/" />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/profile" element={authUser? <ProfilePage /> : <Navigate to="/login" />} />
+      </Routes>
+      
+      <Toaster />
+    </div>
+  );
+};
+
+export default App;
