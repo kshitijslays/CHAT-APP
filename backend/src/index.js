@@ -25,6 +25,10 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.send("backend is Alive")
+})
+
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
